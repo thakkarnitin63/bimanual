@@ -1,0 +1,10 @@
+moveit_setup_assistant_config:
+  urdf:
+    package: bimanual_description
+    relative_path: urdf/bimanual.urdf.xacro
+  srdf:
+    relative_path: config/bimanual.srdf
+  package_settings:
+    author_name: Nitin
+    author_email: thakkarnitin63@gmail.com
+    generated_timestamp: 1781905838

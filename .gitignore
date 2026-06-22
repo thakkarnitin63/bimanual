@@ -1,0 +1,25 @@
+# ---- ROS 2 / colcon build artifacts (NEVER commit) ----
+build/
+install/
+log/
+*.pyc
+__pycache__/
+
+# ---- Isaac Sim temp / cache ----
+*.usd.tmp
+*~
+.thumbs/
+.cache/
+
+# ---- editor / OS noise ----
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# ---- large meshes? (OPTIONAL - see note below) ----
+# If your mesh files are huge and come from upstream packages you clone anyway,
+# you can ignore them. But if they're custom, KEEP them (comment these out).
+# *.stl
+# *.dae
+# *.obj

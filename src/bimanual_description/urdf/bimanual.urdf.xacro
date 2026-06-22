@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://wiki.ros.org/xacro" name="bimanual">
+
+  <!-- Two UR12e arms on a shared world link. left @ y=+0.4, right @ y=-0.4 -->
+
+  <xacro:include filename="$(find ur_description)/urdf/ur_macro.xacro"/>
+  <xacro:include filename="$(find robotiq_description)/urdf/robotiq_2f_85_macro.urdf.xacro"/>
+  <xacro:include filename="$(find robotiq_description)/urdf/ur_to_robotiq_adapter.urdf.xacro"/>
+  <xacro:include filename="$(find epick_description)/urdf/epick_single_suction_cup.xacro"/>
+
+  <xacro:arg name="ur_type" default="ur12e"/>
+  <xacro:arg name="joint_limit_params"
+             default="$(find ur_description)/config/$(arg ur_type)/joint_limits.yaml"/>
+  <xacro:arg name="kinematics_params"
+             default="$(find ur_description)/config/$(arg ur_type)/default_kinematics.yaml"/>
+  <xacro:arg name="physical_params"
+             default="$(find ur_description)/config/$(arg ur_type)/physical_parameters.yaml"/>
+  <xacro:arg name="visual_params"
+             default="$(find ur_description)/config/$(arg ur_type)/visual_parameters.yaml"/>
+
+  <!-- WORLD: root of the cell, at origin -->
+  <link name="world">
+  <inertial>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <mass value="1.0"/>
+    <inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01"/>
+  </inertial>
+</link>
+
+  <!-- LEFT ARM @ y = +0.4 -->
+  <xacro:ur_robot
+      name="left" tf_prefix="left_" parent="world"
+      joint_limits_parameters_file="$(arg joint_limit_params)"
+      kinematics_parameters_file="$(arg kinematics_params)"
+      physical_parameters_file="$(arg physical_params)"
+      visual_parameters_file="$(arg visual_params)">
+    <origin xyz="0 0.4 0" rpy="0 0 0"/>
+  </xacro:ur_robot>
+
+  <xacro:ur_to_robotiq prefix="left_" parent="left_tool0" child="left_gripper_mount"/>
+
+
+  <xacro:robotiq_gripper
+      name="LeftRobotiqGripper"
+      prefix="left_"
+      parent="left_gripper_mount"
+      include_ros2_control="false"
+      use_fake_hardware="true">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </xacro:robotiq_gripper>
+
+  <link name="left_grasp_tcp"/>
+  <joint name="left_grasp_tcp_joint" type="fixed">
+    <parent link="left_robotiq_85_base_link"/>
+    <child link="left_grasp_tcp"/>
+    <origin xyz="0 0 0.135" rpy="0 0 0"/>
+  </joint>
+
+  <!-- RIGHT ARM @ y = -0.4 -->
+  <xacro:ur_robot
+      name="right" tf_prefix="right_" parent="world"
+      joint_limits_parameters_file="$(arg joint_limit_params)"
+      kinematics_parameters_file="$(arg kinematics_params)"
+      physical_parameters_file="$(arg physical_params)"
+      visual_parameters_file="$(arg visual_params)">
+    <origin xyz="0 -0.4 0" rpy="0 0 0"/>
+  </xacro:ur_robot>
+
+  <xacro:epick_single_suction_cup parent="right_tool0" prefix="right_" use_fake_hardware="true"/>
+
+
+</robot>
